@@ -1,0 +1,14 @@
+{
+   "expo": {
+    "name": "Auto attendance",
+    "version": "1.0.0",
+    "slug": "auto-attendance",
+    "sdkVersion": "21.0.0",
+    "ios": {
+      "bundleIdentifier": "com.company.autoattendance"
+    },
+    "android": {
+      "package": "com.company.autoattendance"
+    }
+   }
+ }
