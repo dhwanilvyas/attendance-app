@@ -1,9 +1,10 @@
 import axios from 'axios';
+import Env from '../env';
 
 class API {
   static init() {
     API.axiosInstance = axios.create({
-      baseURL: 'https://199e76ae.ngrok.io/api/',
+      baseURL: Env.apiUrl,
     });
   }
 
