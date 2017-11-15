@@ -8,6 +8,7 @@ import { getStudentData } from '../redux/actions/student';
 
 class Login extends Component {
   state = {
+    pageLoading: true,
     studentIdFound: true,
     studentId: null,
     loading: false,
@@ -22,7 +23,11 @@ class Login extends Component {
     let studentId = await Expo.SecureStore.getItemAsync('attendanceapp');
     if (studentId) {
       this.props.dispatch(getStudentData(studentId));
-      this.props.navigation.navigate('Tab', { studentId });
+      this.props.navigation.navigate('Home');
+    } else {
+      this.setState({
+        pageLoading: false
+      });
     }
   }
 
@@ -36,7 +41,7 @@ class Login extends Component {
 
       StudentApi.login(this.state.studentId)
         .then((response) => {
-          if (!response.data.data) {
+          if (!response.data) {
             this.setState({
               loading: false,
               studentIdFound: false,
@@ -52,6 +57,10 @@ class Login extends Component {
   }
 
   render() {
+    if (this.state.pageLoading) {
+      return <Spinner />
+    }
+
     return (
       <Container style={this.state.studentIdFound ? styles.container : styles.errorContainer}>
         <Content contentContainerStyle={styles.content}>
@@ -65,8 +74,8 @@ class Login extends Component {
                 keyboardType='numeric'
                 placeholder={this.state.placeholder}
                 value={this.state.studentId}
-                placeholderTextColor='#dcdcdc'
-                // underlineColorAndroid='transparent'
+                placeholderTextColor='#e0e0e0'
+                underlineColorAndroid='transparent'
                 style={styles.input} />
               </Item>
             </Form>
@@ -95,7 +104,7 @@ const styles = {
   },
   input: {
     fontSize: 30,
-    color: '#f5f5f5'
+    color: '#ffffff'
   },
   button: {
     margin: 15

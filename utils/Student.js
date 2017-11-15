@@ -52,10 +52,12 @@ export default {
     });
   },
 
-  markAttendance(course, session, tokens) {
+  markAttendance(student, course, session, tokens) {
     const requestBody = {
+      student_id: student,
       course_id: course,
       session_id: session,
+      device_id: Expo.Constants.deviceId,
       tokens
     };
 

@@ -43,7 +43,7 @@ const styles = {
 
 mapStateToProps = ({student}) => {
   return {
-    student: student.student
+    student
   };
 }
 

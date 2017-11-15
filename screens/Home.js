@@ -4,19 +4,9 @@ import { Container, Content, Button, Text, Spinner } from 'native-base';
 import { getStudentData } from '../redux/actions/student';
 
 class Home extends Component {
-  state = {
-    student: null
-  };
-
   static navigationOptions = {
     title: 'Mark attendance'
   };
-
-  // componentDidMount() {
-  //   const { params } = this.props.navigation.state;
-  //   if (params.studentId)
-  //     this.props.dispatch(getStudentData(this.props.navigation.state.params.studentId));
-  // }
 
   render() {
     const { student } = this.props;
@@ -41,20 +31,20 @@ class Home extends Component {
 const styles = {
   content: {
     flex: 1,
-    // backgroundColor: '#26A69A',
     justifyContent: 'center',
     alignItems: 'center',
     padding: 15
   },
   title: {
-    margin: 15,
+    textAlign: 'center',
+    margin: 10,
     fontSize: 30
   }
 }
 
 mapStateToProps = ({student}) => {
   return {
-    student: student.student
+    student
   };
 }
 

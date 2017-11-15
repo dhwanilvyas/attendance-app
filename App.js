@@ -25,9 +25,9 @@ export default class App extends React.Component {
     });
   }
 
-  // componentDidMount() {
-  //   Expo.SecureStore.deleteItemAsync('attendanceapp');
-  // }
+  componentDidMount() {
+    Expo.SecureStore.deleteItemAsync('attendanceapp');
+  }
 
   render() {
     if (this.state.appLoading) {

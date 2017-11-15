@@ -22,6 +22,7 @@ class SelectCourse extends Component {
     this.setState({
       visible: false
     });
+
     if (!response.data.data) {
       ToastAndroid.show('No session for this course is active', ToastAndroid.SHORT);
     } else {

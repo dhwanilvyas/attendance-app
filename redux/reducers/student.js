@@ -1,20 +1,15 @@
 import { STUDENT_DATA_AVAILABLE } from '../actions/types';
+import initialState from '../store/initialState';
 
-const initialState = {
-  student: null
-};
-
-studentReducer = (state = initialState, action) => {
+student = (state = initialState.student, action) => {
   const { student } = action;
 
   switch (action.type) {
     case STUDENT_DATA_AVAILABLE:
-      return Object.assign({}, state, {
-        student: student
-      });
+      return student;
     default:
       return state;
   }
 }
 
-export default studentReducer;
+export default student;
