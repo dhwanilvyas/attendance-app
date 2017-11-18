@@ -1,6 +1,12 @@
 {
    "expo": {
     "name": "Auto attendance",
+    "splash": {
+      "image": "./splash.png",
+      "icon": "./icon.png",
+      "backgroundColor": "#565656",
+      "resizeMode": "cover"
+    },
     "version": "1.0.0",
     "slug": "auto-attendance",
     "sdkVersion": "21.0.0",

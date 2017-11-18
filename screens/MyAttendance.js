@@ -30,10 +30,6 @@ class MyAttendance extends Component {
 }
 
 const styles = {
-  container: {
-    flex: 1
-    // backgroundColor: '#FFCA28',
-  },
   listitem: {
     width: '100%',
     marginLeft: 0,

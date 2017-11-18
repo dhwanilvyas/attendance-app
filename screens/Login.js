@@ -1,29 +1,26 @@
 import React, { Component } from 'react';
 import Expo from 'expo';
-import { Container, Content, Center, Form, Item, Label, Input, H3, Button, Text, Spinner } from 'native-base';
-import { ToastAndroid, View } from 'react-native';
-import { connect } from 'react-redux';
+import { Container, Content, Center, Form, Item, Label, Input, Button, Text, Spinner } from 'native-base';
+import { ToastAndroid } from 'react-native';
 import StudentApi from '../utils/Student';
-import { getStudentData } from '../redux/actions/student';
 
 class Login extends Component {
+  static navigationOptions = {
+    header: null,
+  };
+
   state = {
     pageLoading: true,
     studentIdFound: true,
     studentId: null,
     loading: false,
-    placeholder: '201612001'
-  };
-
-  static navigationOptions = {
-    header: null,
+    deviceAlreadyRegistered: false
   };
 
   async componentDidMount() {
     let studentId = await Expo.SecureStore.getItemAsync('attendanceapp');
     if (studentId) {
-      this.props.dispatch(getStudentData(studentId));
-      this.props.navigation.navigate('Home');
+      this.props.navigation.navigate('Home', {studentId});
     } else {
       this.setState({
         pageLoading: false
@@ -32,28 +29,36 @@ class Login extends Component {
   }
 
   checkStudentId = () => {
+    let studentIdFound = true, deviceAlreadyRegistered = false;
+
     if (!this.state.studentId) {
       ToastAndroid.show('Please enter student id', ToastAndroid.SHORT);
-    } else {
-      this.setState({
-        loading: true
-      });
-
-      StudentApi.login(this.state.studentId)
-        .then((response) => {
-          if (!response.data) {
-            this.setState({
-              loading: false,
-              studentIdFound: false,
-              message: 'Student not found'
-            });
-          } else {
-            this.props.dispatch(getStudentData(this.state.studentId));
-            Expo.SecureStore.setItemAsync('attendanceapp', this.state.studentId);
-            this.props.navigation.navigate('Tab', { studentId: this.state.studentId });
-          }
-        });
+      return;
     }
+
+    this.setState({
+      loading: true
+    });
+
+    StudentApi.login(this.state.studentId)
+      .then((response) => {
+        if (!response.data.data) {
+          studentIdFound = false;
+          deviceAlreadyRegistered = false;
+        } else if (response.data.data && response.data.data.device_already_registered) {
+          studentIdFound = true;
+          deviceAlreadyRegistered = true;
+        } else {
+          Expo.SecureStore.setItemAsync('attendanceapp', this.state.studentId);
+          this.props.navigation.navigate('Home', { studentId: this.state.studentId });
+        }
+
+        this.setState({
+          loading: false,
+          studentIdFound,
+          deviceAlreadyRegistered
+        });
+      });
   }
 
   render() {
@@ -62,27 +67,29 @@ class Login extends Component {
     }
 
     return (
-      <Container style={this.state.studentIdFound ? styles.container : styles.errorContainer}>
+      <Container style={styles.container}>
         <Content contentContainerStyle={styles.content}>
           <Form>
-            <Text style={{ margin: 20, color: 'white'}}>Enter student id</Text>
+            <Text style={{ margin: 20, fontFamily: 'open-sans', }}>Enter your student id</Text>
             <Item style={{ backgroundColor: 'transparent', borderColor: 'transparent' }}>
               <Input
                 onChangeText={value => this.setState({studentId: value})}
                 onSubmitEditing={this.checkStudentId}
                 autoFocus
                 keyboardType='numeric'
-                placeholder={this.state.placeholder}
+                placeholder='201612001'
                 value={this.state.studentId}
-                placeholderTextColor='#e0e0e0'
+                placeholderTextColor='#acacac'
                 underlineColorAndroid='transparent'
+                returnKeyType='go'
                 style={styles.input} />
               </Item>
             </Form>
-          {!this.state.studentIdFound && <Text style={{margin: 20, color: '#212121'}}>Student id not found</Text>}
+            {!this.state.studentIdFound && <Text style={{margin: 20, color: 'grey', fontFamily: 'open-sans',}}>Student id does not exist. Please try again.</Text>}
+            {this.state.deviceAlreadyRegistered && <Text style={{margin: 20, color: 'grey', fontFamily: 'open-sans',}}>Looks like you got a new device. Please contact the admin to update your device id.</Text>}
         </Content>
-        <Button light block disabled={this.state.loading} style={{margin: 15, backgroundColor: this.state.loading ? '#e0e0e0' : '#ffffff'}} onPress={this.checkStudentId}>
-          {!this.state.loading && <Text style={{color: !this.state.studentIdFound ? '#EF5350' : '#2ea664'}}>Proceed</Text>}
+        <Button dark block disabled={this.state.loading} style={{ margin: 15 }} onPress={this.checkStudentId}>
+          {!this.state.loading && <Text>Proceed</Text>}
           {this.state.loading && <Spinner />}
         </Button>
       </Container>
@@ -92,7 +99,7 @@ class Login extends Component {
 
 const styles = {
   container: {
-    backgroundColor: '#2ea664',
+    backgroundColor: '#ffffff',
   },
   errorContainer: {
     backgroundColor: '#EF5350'
@@ -103,20 +110,9 @@ const styles = {
     alignItems: 'stretch'
   },
   input: {
-    fontSize: 30,
-    color: '#ffffff'
+    fontSize: 40,
+    fontFamily: 'open-sans-light',
   },
-  button: {
-    margin: 15
-    // backgroundColor: '#ffffff',
-    // marginBottom: 25,
-    // marginLeft: 10,
-    // marginRight: 10,
-    // marginTop: 50
-  },
-  footerText: {
-    color: '#2ea664',
-  }
 }
 
-export default connect()(Login);
+export default Login;

@@ -1,12 +1,12 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { Provider } from 'react-redux';
-import { StyleSheet, Text, View, ToastAndroid, StatusBar } from 'react-native';
+import { View, StatusBar } from 'react-native';
 import Expo from 'expo';
 import { Container, Spinner } from 'native-base';
 import AppNavigation from './AppNavigation';
 import store from './redux/store';
 
-export default class App extends React.Component {
+export default class App extends Component {
   constructor() {
     super();
     this.state = {
@@ -18,6 +18,8 @@ export default class App extends React.Component {
     await Expo.Font.loadAsync({
       'Roboto': require('native-base/Fonts/Roboto.ttf'),
       'Roboto_medium': require('native-base/Fonts/Roboto_medium.ttf'),
+      'open-sans': require('./assets/fonts/OpenSans-Regular.ttf'),
+      'open-sans-light': require('./assets/fonts/OpenSans-Light.ttf'),
     });
 
     this.setState({
@@ -25,9 +27,9 @@ export default class App extends React.Component {
     });
   }
 
-  componentDidMount() {
-    Expo.SecureStore.deleteItemAsync('attendanceapp');
-  }
+  // componentDidMount() {
+  //   Expo.SecureStore.deleteItemAsync('attendanceapp');
+  // }
 
   render() {
     if (this.state.appLoading) {
@@ -51,7 +53,7 @@ export default class App extends React.Component {
   }
 }
 
-const styles = StyleSheet.create({
+const styles = {
   container: {
     flex: 1,
     marginTop: 24
@@ -60,4 +62,4 @@ const styles = StyleSheet.create({
     backgroundColor: "#000000",
     height: Expo.Constants.statusBarHeight,
   },
-});
+};

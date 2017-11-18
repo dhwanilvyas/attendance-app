@@ -36,7 +36,7 @@ class MarkAttendance extends React.Component {
               barCodeTypes={[BarCodeScanner.Constants.BarCodeType.qr]}
               >
                 <Text style={styles.text}>Press this button only when it shows session complete on the big screen.</Text>
-                <Button full style={styles.button} onPress={this.markAttendance}>
+                <Button dark full style={styles.button} onPress={this.markAttendance}>
                   <Text>Mark attendance</Text>
                 </Button>
               </BarCodeScanner>
@@ -47,16 +47,18 @@ class MarkAttendance extends React.Component {
   }
 
   handleBarCodeRead = ({ type, data }) => {
-    if (scanned.length) {
-      if (!scanned.includes(data))
-        scanned.push(data);
-    } else {
+    if (!scanned.includes(data)) {
       scanned.push(data);
+      ToastAndroid.show('QR scanned, wait for another to flash', ToastAndroid.SHORT);
     }
-    ToastAndroid.show('QR scanned, wait for another to flash', ToastAndroid.SHORT);
   }
 
   markAttendance = () => {
+    if (!scanned.length) {
+      ToastAndroid.show('You must scan atleast one QR code', ToastAndroid.SHORT);
+      return;
+    }
+
     const { session, course } = this.props.navigation.state.params;
     this.props.navigation.navigate('MarkingAttendance', {
       course,

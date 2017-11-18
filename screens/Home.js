@@ -2,11 +2,17 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Container, Content, Button, Text, Spinner } from 'native-base';
 import { getStudentData } from '../redux/actions/student';
+import commonStyles from '../utils/commonStyles';
 
 class Home extends Component {
   static navigationOptions = {
     title: 'Mark attendance'
   };
+
+  componentDidMount() {
+    if (this.props.navigation.state.params)
+      this.props.dispatch(getStudentData(this.props.navigation.state.params.studentId));
+  }
 
   render() {
     const { student } = this.props;
@@ -30,15 +36,14 @@ class Home extends Component {
 
 const styles = {
   content: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    ...commonStyles.center,
     padding: 15
   },
   title: {
     textAlign: 'center',
     margin: 10,
-    fontSize: 30
+    fontSize: 30,
+    fontFamily: 'open-sans',
   }
 }
 
