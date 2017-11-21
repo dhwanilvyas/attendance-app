@@ -11,10 +11,10 @@ class Login extends Component {
 
   state = {
     pageLoading: true,
-    studentIdFound: true,
+    message: null,
     studentId: null,
     loading: false,
-    deviceAlreadyRegistered: false
+    valid: false,
   };
 
   async componentDidMount() {
@@ -29,7 +29,7 @@ class Login extends Component {
   }
 
   checkStudentId = () => {
-    let studentIdFound = true, deviceAlreadyRegistered = false;
+    let message = null;
 
     if (!this.state.studentId) {
       ToastAndroid.show('Please enter student id', ToastAndroid.SHORT);
@@ -43,11 +43,7 @@ class Login extends Component {
     StudentApi.login(this.state.studentId)
       .then((response) => {
         if (!response.data.data) {
-          studentIdFound = false;
-          deviceAlreadyRegistered = false;
-        } else if (response.data.data && response.data.data.device_already_registered) {
-          studentIdFound = true;
-          deviceAlreadyRegistered = true;
+          message = response.data.message;
         } else {
           Expo.SecureStore.setItemAsync('attendanceapp', this.state.studentId);
           this.props.navigation.navigate('Home', { studentId: this.state.studentId });
@@ -55,8 +51,7 @@ class Login extends Component {
 
         this.setState({
           loading: false,
-          studentIdFound,
-          deviceAlreadyRegistered
+          message,
         });
       });
   }
@@ -73,7 +68,10 @@ class Login extends Component {
             <Text style={{ margin: 20, fontFamily: 'open-sans', }}>Enter your student id</Text>
             <Item style={{ backgroundColor: 'transparent', borderColor: 'transparent' }}>
               <Input
-                onChangeText={value => this.setState({studentId: value})}
+                onChangeText={value => {
+                  const valid = value.length >= 9 ? true : false;
+                  this.setState({studentId: value, valid});
+                }}
                 onSubmitEditing={this.checkStudentId}
                 autoFocus
                 keyboardType='numeric'
@@ -85,10 +83,9 @@ class Login extends Component {
                 style={styles.input} />
               </Item>
             </Form>
-            {!this.state.studentIdFound && <Text style={{margin: 20, color: 'grey', fontFamily: 'open-sans',}}>Student id does not exist. Please try again.</Text>}
-            {this.state.deviceAlreadyRegistered && <Text style={{margin: 20, color: 'grey', fontFamily: 'open-sans',}}>Looks like you got a new device. Please contact the admin to update your device id.</Text>}
+            {this.state.message && <Text style={{margin: 20, color: 'grey', fontFamily: 'open-sans',}}>{this.state.message}</Text>}
         </Content>
-        <Button dark block disabled={this.state.loading} style={{ margin: 15 }} onPress={this.checkStudentId}>
+        <Button dark block disabled={this.state.loading || !this.state.valid} style={{ margin: 15 }} onPress={this.checkStudentId}>
           {!this.state.loading && <Text>Proceed</Text>}
           {this.state.loading && <Spinner />}
         </Button>
